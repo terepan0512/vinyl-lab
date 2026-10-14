@@ -1,0 +1,129 @@
+
+/* Cyberpunk color palette: load after index.css to override the original parchment theme */
+
+:focus-visible {
+  outline: 3px solid #35f2ff;
+}
+
+.booth {
+  background: #07041a;
+}
+
+/* Store signage */
+.sign h1 {
+  background: linear-gradient(90deg, #ff4fd8, #7c6bff 55%, #35f2ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(255, 79, 216, 0.45));
+}
+.sign p {
+  color: #35f2ff;
+  opacity: 0.9;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* Control panel: dark frosted glass with neon borders */
+.sleeve {
+  background: rgba(14, 8, 44, 0.68);
+  background-image: none;
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  color: #efe6ff;
+  border: 1px solid rgba(255, 79, 216, 0.55);
+  border-radius: 6px;
+  box-shadow:
+    0 0 0 1px rgba(53, 242, 255, 0.18),
+    0 0 28px rgba(255, 79, 216, 0.28),
+    0 18px 40px rgba(0, 0, 0, 0.6);
+  transform: none;
+}
+.sleeve__empty,
+.sleeve__title {
+  color: #f6eeff;
+}
+.notes div {
+  border-bottom: 1px dotted rgba(200, 180, 255, 0.35);
+}
+.notes dd {
+  color: #35f2ff;
+}
+
+/* Playback button */
+.sticker {
+  background: linear-gradient(135deg, #ff4fd8, #7c6bff);
+  color: #fff;
+  box-shadow:
+    0 0 22px rgba(255, 79, 216, 0.65),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  transform: none;
+}
+.sticker[aria-pressed='true'] {
+  background: linear-gradient(135deg, #35f2ff, #7c6bff);
+  box-shadow:
+    0 0 22px rgba(53, 242, 255, 0.7),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+  transform: scale(0.96);
+}
+.times {
+  color: #d9ccff;
+}
+
+/* Playback progress slider */
+.groove::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    to right,
+    #ff4fd8 var(--progress, 0%),
+    rgba(200, 180, 255, 0.25) var(--progress, 0%)
+  );
+}
+.groove::-webkit-slider-thumb {
+  background: #fff;
+  border-color: #ff4fd8;
+}
+.groove::-moz-range-track {
+  background: rgba(200, 180, 255, 0.25);
+}
+.groove::-moz-range-progress {
+  background: #ff4fd8;
+}
+.groove::-moz-range-thumb {
+  background: #fff;
+  border-color: #ff4fd8;
+}
+
+/* Audio upload area */
+.crate__button {
+  color: #efe6ff;
+  border: 2px dashed rgba(255, 79, 216, 0.7);
+  background: rgba(255, 79, 216, 0.07);
+}
+.crate--over .crate__button {
+  background: rgba(53, 242, 255, 0.2);
+}
+.crate__hint {
+  color: #cdbfff;
+}
+.crate__error {
+  color: #ff9ad8;
+}
+
+/* Full-screen canvas layout: use dvh on mobile to account for browser UI */
+html, body, #root { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
+.booth { height: auto; min-height: 0; overflow: visible; }
+.stage { position: relative; width: 100%; height: 100vh; height: 100dvh; min-height: 0; }
+.stage canvas { display: block; }
+
+/* Cover art editor modal */
+.cover-ed { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(5, 2, 20, 0.7); backdrop-filter: blur(4px); }
+.cover-ed__card { width: min(360px, 92vw); padding: 18px; border-radius: 14px; background: #120a30; border: 1px solid rgba(255, 79, 216, 0.6); box-shadow: 0 0 30px rgba(255, 79, 216, 0.3), 0 0 60px rgba(53, 242, 255, 0.15); color: #efe6ff; font-family: system-ui, sans-serif; }
+.cover-ed__title { font-size: 14px; letter-spacing: 0.12em; color: #35f2ff; margin-bottom: 10px; }
+.cover-ed__preview { aspect-ratio: 1; border-radius: 8px; overflow: hidden; display: grid; place-items: center; background: #0a0620; border: 1px dashed rgba(53, 242, 255, 0.4); font-size: 13px; color: #cdbfff; text-align: center; padding: 12px; }
+.cover-ed__preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover-ed__row { display: flex; gap: 8px; margin-top: 10px; }
+.cover-ed__row button { flex: 1; padding: 10px 8px; border-radius: 8px; border: 1px solid rgba(53, 242, 255, 0.6); background: rgba(53, 242, 255, 0.08); color: #efe6ff; font-size: 14px; cursor: pointer; }
+.cover-ed__row button.primary { border-color: #ff4fd8; background: rgba(255, 79, 216, 0.2); }
+.cover-ed__row button:disabled { opacity: 0.35; cursor: default; }
+.cover-ed__err { margin-top: 8px; color: #ff9ad8; font-size: 13px; }

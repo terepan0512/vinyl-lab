@@ -1,0 +1,302 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Young+Serif&display=swap');
+
+:root {
+  --wall: #100c24;
+  --wall-deep: #07041a;
+  --walnut: #1a1233;
+  --kraft: #15102d;
+  --ink: #e9e1ff;
+  --chalk: #e9e1ff;
+  --sticker: #ff4fd8;
+  --neon-pink: #ff4fd8;
+  --neon-cyan: #35f2ff;
+  --serif: 'Young Serif', Georgia, serif;
+  --typed: 'Courier Prime', 'Courier New', monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--wall-deep);
+  color: var(--chalk);
+  font-family: var(--typed);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--neon-cyan);
+  outline-offset: 3px;
+}
+
+/* ---------- Main Layout ---------- */
+.booth {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(340px, 0.8fr);
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 32% 48%, #211747 0%, var(--wall) 50%, var(--wall-deep) 100%);
+}
+
+/* Store Branding */
+.sign {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  z-index: 2;
+}
+.sign h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1;
+  color: var(--chalk);
+  text-shadow: 0 0 18px rgba(255, 79, 216, 0.35);
+}
+.sign p {
+  margin: 6px 0 0;
+  opacity: 0.6;
+  font-size: 0.95rem;
+}
+
+/* 3D Scene */
+.stage {
+  height: 100dvh;
+  min-width: 0;
+}
+
+/* ---------- Floating Player Panel ---------- */
+.sleeve {
+  margin: 32px 40px 32px 0;
+  padding: 36px 32px 32px;
+  background: rgba(15, 10, 37, 0.88);
+  color: var(--chalk);
+  border: 1px solid rgba(53, 242, 255, 0.25);
+  border-radius: 12px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(255, 79, 216, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.sleeve__empty {
+  margin: 0 0 20px;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.sleeve__title {
+  margin: 0 0 20px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.notes {
+  margin: 0 0 28px;
+}
+.notes div {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dotted rgba(233, 225, 255, 0.3);
+}
+.notes dt,
+.notes dd {
+  margin: 0;
+}
+
+/* Neon Playback Button */
+.player {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.sticker {
+  flex: none;
+  width: 92px;
+  height: 92px;
+  border: 1px solid rgba(255, 79, 216, 0.8);
+  border-radius: 50%;
+  background: var(--neon-pink);
+  color: #07041a;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  box-shadow:
+    0 0 18px rgba(255, 79, 216, 0.35),
+    0 0 36px rgba(255, 79, 216, 0.12);
+  transform: rotate(-9deg);
+  transition: transform 0.2s ease;
+}
+.sticker[aria-pressed='true'] {
+  transform: rotate(3deg) scale(0.96);
+}
+
+.times {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+.times span:last-child {
+  opacity: 0.65;
+}
+
+/* Playback Progress Slider */
+.groove {
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.groove::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    var(--neon-cyan) var(--progress, 0%),
+    rgba(233, 225, 255, 0.25) var(--progress, 0%)
+  );
+}
+.groove::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border: 3px solid var(--neon-cyan);
+  border-radius: 50%;
+  background: var(--wall-deep);
+}
+.groove::-moz-range-track {
+  height: 4px;
+  background: rgba(233, 225, 255, 0.25);
+}
+.groove::-moz-range-progress {
+  height: 4px;
+  background: var(--neon-cyan);
+}
+.groove::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 3px solid var(--neon-cyan);
+  border-radius: 50%;
+  background: var(--wall-deep);
+}
+
+/* ---------- Music Upload Area ---------- */
+.crate {
+  margin-top: 8px;
+}
+.crate__button {
+  display: block;
+  width: 100%;
+  padding: 22px 16px;
+  border: 2px dashed rgba(53, 242, 255, 0.55);
+  border-radius: 8px;
+  background: rgba(53, 242, 255, 0.05);
+  color: var(--chalk);
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  transition: background 0.15s ease;
+}
+.crate--over .crate__button {
+  background: rgba(53, 242, 255, 0.18);
+}
+.crate--compact .crate__button {
+  padding: 10px 16px;
+  font-size: 1rem;
+}
+.crate__hint {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+.crate__error {
+  margin: 10px 0 0;
+  font-weight: 700;
+  color: #ff8ba7;
+}
+
+/* ---------- Mobile Layout ---------- */
+@media (max-width: 860px) {
+  .booth {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .stage {
+    height: 52dvh;
+  }
+  .sleeve {
+    margin: 0 20px 32px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+  .sign {
+    top: 20px;
+    left: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* ---------- Fullscreen 3D Scene with Floating Player ---------- */
+.booth {
+  display: block;
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+}
+.stage {
+  position: absolute;
+  inset: 0;
+  height: auto;
+}
+.sleeve {
+  position: absolute;
+  z-index: 2;
+  right: 32px;
+  bottom: 32px;
+  width: min(340px, calc(100% - 40px));
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .stage {
+    height: auto;
+  }
+  .sleeve {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    width: auto;
+  }
+}
