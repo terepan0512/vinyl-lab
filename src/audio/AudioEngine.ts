@@ -9,7 +9,7 @@ export class AudioEngine {
       this.element.preload = 'metadata'
     }
   
-    // AudioContext 必须在用户操作之后创建，所以延迟到第一次 play
+    // Create AudioContext on the first play action to satisfy browser gesture requirements.
     private ensureContext(): AudioContext {
       if (this.context) return this.context
   
@@ -21,9 +21,9 @@ export class AudioEngine {
       const context = new Ctor()
       const analyser = context.createAnalyser()
       analyser.fftSize = 2048
-      analyser.smoothingTimeConstant = 0.8
+      analyser.smoothingTimeConstant = 0.3
   
-      // 同一个 <audio> 元素只能创建一次 source
+      // An <audio> element can only have one media element source.
       const source = context.createMediaElementSource(this.element)
       source.connect(analyser)
       analyser.connect(context.destination)

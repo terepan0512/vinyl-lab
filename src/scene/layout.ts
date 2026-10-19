@@ -1,4 +1,4 @@
-// 场景里多个文件共用的位置常量
+// Position constants shared by multiple scene files
 export const WALL_Z = -2.2
-// 墙上所有东西（窗户、封套架、海报、吉他、灯牌）整体上移的高度，给柜台上的东西留出空间
+// Raise all wall objects (window, cover rack, posters, guitar, and signs) to leave room above the counter
 export const WALL_LIFT = 0.4

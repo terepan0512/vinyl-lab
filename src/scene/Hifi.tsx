@@ -1,12 +1,12 @@
 import { RoundedBox } from '@react-three/drei'
 
-// 地面在柜子底下，音响和地板都以它为基准
+// Floor level beneath the cabinet, shared by the speakers and floor
 export const FLOOR_Y = -3.0
 
 const NEON_PINK = '#ff4fd8'
 const NEON_CYAN = '#35f2ff'
 
-// ---------------- 地板 ----------------
+// ---------------- Floor ----------------
 function Floor() {
   return (
     <mesh position={[0, FLOOR_Y, 3]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
@@ -16,20 +16,20 @@ function Floor() {
   )
 }
 
-// ---------------- 落地音箱 ----------------
+// ---------------- Floorstanding speakers ----------------
 function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
   const W = 1.6
   const H = 3.8
   const D = 1.3
   const FEET = 0.12
-  const k = 1.3 // 喇叭单元的放大倍数
+  const k = 1.3 // Speaker driver scale factor
   const front = D / 2 + 0.002
   const chrome = <meshStandardMaterial color="#cfd3dc" metalness={1} roughness={0.25} />
   const rubber = <meshStandardMaterial color="#07041a" roughness={0.8} />
 
   return (
     <group position={[x, FLOOR_Y, z]} rotation={[0, toe, 0]}>
-      {/* 脚 */}
+      {/* Feet */}
       {[-0.6, 0.6].flatMap((fx) =>
         [-0.5, 0.5].map((fz) => (
           <mesh key={`${fx}${fz}`} position={[fx, FEET / 2, fz]} castShadow>
@@ -38,19 +38,19 @@ function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
           </mesh>
         )),
       )}
-      {/* 箱体 */}
+      {/* Speaker cabinet */}
       <group position={[0, FEET + H / 2, 0]}>
         <RoundedBox args={[W, H, D]} radius={0.07} smoothness={4} castShadow receiveShadow>
           <meshStandardMaterial color="#14092e" metalness={0.35} roughness={0.42} />
         </RoundedBox>
 
-        {/* 前面板 */}
+        {/* Front panel */}
         <mesh position={[0, 0, front]}>
           <planeGeometry args={[W - 0.16, H - 0.16]} />
           <meshStandardMaterial color="#0d0624" metalness={0.5} roughness={0.5} />
         </mesh>
 
-        {/* 高音：小圆顶 */}
+        {/* Tweeter: small dome */}
         <group position={[0, H * 0.32, front]} scale={k}>
           <mesh>
             <circleGeometry args={[0.2, 32]} />
@@ -66,7 +66,7 @@ function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
           </mesh>
         </group>
 
-        {/* 低音：大纸盆 */}
+        {/* Woofer: large paper cone */}
         <group position={[0, -H * 0.03, front]} scale={k}>
           <mesh>
             <circleGeometry args={[0.5, 40]} />
@@ -90,7 +90,7 @@ function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
           </mesh>
         </group>
 
-        {/* 倒相孔 */}
+        {/* Bass reflex port */}
         <group position={[0, -H * 0.37, front]} scale={k}>
           <mesh>
             <circleGeometry args={[0.11, 24]} />
@@ -102,7 +102,7 @@ function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
           </mesh>
         </group>
 
-        {/* 霓虹：左右两条竖灯，底部一条粉色横灯 */}
+        {/* Neon: vertical strips on both sides and a pink horizontal strip at the bottom */}
         {[-1, 1].map((s) => (
           <mesh key={s} position={[s * (W / 2 - 0.05), 0, front + 0.004]}>
             <boxGeometry args={[0.025, H - 0.4, 0.02]} />
@@ -118,13 +118,13 @@ function Speaker({ x, z, toe }: { x: number; z: number; toe: number }) {
   )
 }
 
-// ---------------- 耳机架和 hifi 耳机 ----------------
-// 头梁是一条扁平的宽带，耳罩是椭圆的，外面一块拉丝金属盖板，里面是粉边的软耳垫。
+// ---------------- Headphone stand and hi-fi headphones ----------------
+// A wide, flat headband with oval earcups, brushed metal outer plates, and soft pink-rimmed ear cushions.
 function Headphones({ x, z, ry }: { x: number; z: number; ry: number }) {
-  const R = 0.52 // 头梁半径
-  const stemTop = 1.4 // 耳机架顶端高度
-  const yc = stemTop - R // 头梁圆心高度
-  const CUP_Y = yc - 0.36 // 耳罩中心高度
+  const R = 0.52 // Headband radius
+  const stemTop = 1.4 // Headphone stand top height
+  const yc = stemTop - R // Headband center height
+  const CUP_Y = yc - 0.36 // Earcup center height
   const chrome = <meshStandardMaterial color="#cfd3dc" metalness={1} roughness={0.25} />
   const brushed = <meshStandardMaterial color="#9a96b8" metalness={1} roughness={0.38} />
   const shell = <meshStandardMaterial color="#17102f" metalness={0.45} roughness={0.32} />
@@ -133,7 +133,7 @@ function Headphones({ x, z, ry }: { x: number; z: number; ry: number }) {
 
   return (
     <group position={[x, 0, z]} rotation={[0, ry, 0]}>
-      {/* 架子：底座、立杆、托住头梁的小圆盘 */}
+      {/* Stand: base, upright, and small disc supporting the headband */}
       <mesh position={[0, 0.03, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[0.38, 0.4, 0.06, 32]} />
         <meshStandardMaterial color="#1a1233" metalness={0.7} roughness={0.35} />
@@ -151,7 +151,7 @@ function Headphones({ x, z, ry }: { x: number; z: number; ry: number }) {
         {chrome}
       </mesh>
 
-      {/* 头梁：扁平的宽带，里面一段粉色软垫 */}
+      {/* Headband: wide flat band with pink padding inside */}
       <mesh position={[0, yc, 0]} scale={[1, 1, 2.2]} castShadow>
         <torusGeometry args={[R, 0.05, 12, 48, Math.PI]} />
         {leather}
@@ -161,31 +161,31 @@ function Headphones({ x, z, ry }: { x: number; z: number; ry: number }) {
         <meshStandardMaterial color={NEON_PINK} emissive={NEON_PINK} emissiveIntensity={0.25} roughness={0.5} />
       </mesh>
 
-      {/* 两个耳罩 */}
+      {/* Two earcups */}
       {[-1, 1].map((s) => (
         <group key={s}>
-          {/* 头梁末端的金属滑杆，插进耳罩顶 */}
+          {/* Metal sliders at the headband ends, inserted into the earcup tops */}
           <mesh position={[s * R, yc - 0.1, 0]}>
             <cylinderGeometry args={[0.03, 0.03, 0.22, 12]} />
             {chrome}
           </mesh>
           <group position={[s * (R + 0.02), CUP_Y, 0]}>
-            {/* 椭圆的罩体 */}
+            {/* Oval earcup shell */}
             <mesh scale={[0.17, 0.31, 0.26]} castShadow>
               <sphereGeometry args={[1, 36, 24]} />
               {shell}
             </mesh>
-            {/* 外面的拉丝金属盖板 */}
+            {/* Outer brushed metal plate */}
             <mesh position={[s * 0.168, 0, 0]} rotation={[0, s * Math.PI / 2, 0]} scale={[0.82, 1.1, 1]}>
               <circleGeometry args={[0.23, 40]} />
               {brushed}
             </mesh>
-            {/* 盖板中间一圈粉色灯 */}
+            {/* Pink light ring in the center of the plate */}
             <mesh position={[s * 0.17, 0, 0]} rotation={[0, s * Math.PI / 2, 0]} scale={[0.82, 1.1, 1]}>
               <torusGeometry args={[0.12, 0.011, 8, 36]} />
               <meshBasicMaterial color={NEON_PINK} toneMapped={false} />
             </mesh>
-            {/* 里面朝向头的软耳垫，椭圆的 */}
+            {/* Soft oval ear cushions facing the listener */}
             <mesh position={[-s * 0.15, 0, 0]} rotation={[0, Math.PI / 2, 0]} scale={[0.85, 1.15, 1]}>
               <torusGeometry args={[0.18, 0.075, 14, 36]} />
               <meshStandardMaterial color="#2a1650" roughness={0.9} />
@@ -201,10 +201,10 @@ export default function Hifi() {
   return (
     <group>
       <Floor />
-      {/* 柜子两边各一只落地音箱，略微向内转 */}
+      {/* One floorstanding speaker on each side of the cabinet, angled slightly inward */}
       <Speaker x={-7.9} z={0.4} toe={0.18} />
       <Speaker x={7.9} z={0.4} toe={-0.18} />
-      {/* 台面左前角的耳机架，在灯牌下面 */}
+      {/* Headphone stand at the front left of the counter, beneath the sign */}
       <Headphones x={-4.5} z={1.25} ry={0.35} />
     </group>
   )

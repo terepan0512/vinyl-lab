@@ -1,4 +1,4 @@
-// 生成唱片封面：纯 canvas、不带文字。同一个 seed 永远出同一张图。
+// Generate text-free record covers with canvas. The same seed always produces the same image.
 export const COVER_SIZE = 512
 export const COVER_STYLES = ['sunset', 'moon', 'rings', 'glitch', 'city', 'orbit', 'peaks'] as const
 
@@ -44,7 +44,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
   }
 
   if (st === 0) {
-    // 日落 + 条纹太阳 + 透视网格
+    // Sunset, striped sun, and perspective grid
     stars(60)
     const horizon = S * 0.62
     const sun = ctx.createLinearGradient(0, 70, 0, horizon)
@@ -76,7 +76,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
     }
     ctx.globalAlpha = 1
   } else if (st === 1) {
-    // 新月 + 水面倒影
+    // Crescent moon and water reflection
     stars(80)
     const horizon = S * 0.66
     const mx = S * 0.5
@@ -99,7 +99,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
     }
     ctx.globalAlpha = 1
   } else if (st === 2) {
-    // 偏心同心圆 + 波浪线
+    // Offset concentric circles and wavy lines
     const cx = S * (0.35 + r() * 0.3)
     const cy = S * (0.35 + r() * 0.3)
     for (let i = 12; i >= 1; i--) {
@@ -121,7 +121,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
       ctx.stroke()
     }
   } else if (st === 3) {
-    // 故障条纹
+    // Glitch stripes
     for (let i = 0; i < 26; i++) {
       const y = r() * S
       const h = 6 + r() * 46
@@ -140,7 +140,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
     ctx.arc(S / 2 + 8, S / 2, 120, 0, Math.PI * 2)
     ctx.stroke()
   } else if (st === 4) {
-    // 月亮 + 城市天际线
+    // Moon and city skyline
     stars(70)
     ctx.fillStyle = P.a
     ctx.beginPath()
@@ -162,7 +162,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
       x += w + 4
     }
   } else if (st === 6) {
-    // 层叠的山
+    // Layered mountains
     stars(50)
     ctx.fillStyle = P.a
     ctx.beginPath()
@@ -185,7 +185,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
     }
     ctx.globalAlpha = 1
   } else {
-    // 行星 + 星环
+    // Planet and rings
     stars(90)
     const pg = ctx.createLinearGradient(S * 0.3, S * 0.2, S * 0.7, S * 0.8)
     pg.addColorStop(0, P.a)
@@ -212,7 +212,7 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
     ctx.restore()
   }
 
-  // 颗粒 + 暗角
+  // Grain and vignette
   for (let i = 0; i < 1800; i++) {
     ctx.fillStyle = r() > 0.5 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.07)'
     ctx.fillRect(r() * S, r() * S, 1 + r() * 2, 1 + r() * 2)
@@ -224,12 +224,12 @@ export function drawGeneratedCover(ctx: CanvasRenderingContext2D, seed: number, 
   ctx.fillRect(0, 0, S, S)
 }
 
-// 把用户上传的图片居中裁成正方形，缩到 512
+// Center-crop an uploaded image to a square and resize it to 512
 export function imageToCoverDataUrl(img: CanvasImageSource & { width: number; height: number }) {
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = COVER_SIZE
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   const m = Math.min(img.width, img.height)
   ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, COVER_SIZE, COVER_SIZE)
   return canvas.toDataURL('image/jpeg', 0.9)
@@ -239,7 +239,7 @@ export function generatedCoverDataUrl(seed: number, style?: number) {
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = COVER_SIZE
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   drawGeneratedCover(ctx, seed, style)
   return canvas.toDataURL('image/jpeg', 0.9)
 }

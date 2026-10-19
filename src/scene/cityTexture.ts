@@ -6,7 +6,7 @@ function canvas(w: number, h: number): [HTMLCanvasElement, CanvasRenderingContex
   c.width = w
   c.height = h
   const ctx = c.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   return [c, ctx]
 }
 

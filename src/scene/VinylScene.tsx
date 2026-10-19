@@ -1,12 +1,14 @@
 
-import { useLayoutEffect, useMemo } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
+import { useLayoutEffect, useMemo, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Environment, Lightformer, OrbitControls } from '@react-three/drei'
-import { MathUtils, Object3D, type PerspectiveCamera } from 'three'
+import { MathUtils, Object3D, type PerspectiveCamera, type SpotLight } from 'three'
 import Shop, { WALL_Z } from './Shop'
 import Turntable from './Turntable'
 import Amp from './Amp'
 import Hifi from './Hifi'
+import RenderPerformance from './RenderPerformance'
+import { usePlayerStore } from '../state/playerStore'
 
 // ================= Lighting Configuration =================
 // Scene too dark: increase wallSpot, deckSpot, ambient, or env.
@@ -53,21 +55,50 @@ interface SpotProps {
   angle: number
   color: string
   shadowSize?: number
+  movingShadow?: boolean
 }
 
-function Spot({ position, aim, intensity, angle, color, shadowSize = 1024 }: SpotProps) {
+function invalidateLightShadow(light: SpotLight) {
+  light.shadow.needsUpdate = true
+}
+
+function Spot({ position, aim, intensity, angle, color, shadowSize = 512, movingShadow = false }: SpotProps) {
   // Create a dedicated target object to avoid relying on a ref
   // that becomes available only after the initial render.
   const target = useMemo(() => new Object3D(), [])
+  const light = useRef<SpotLight>(null)
+  const refresh = useRef({ elapsed: 0, last: -1, status: '', settlingUntil: 0, warmupUntil: 1 })
 
   useLayoutEffect(() => {
     target.position.set(...aim)
     target.updateMatrixWorld()
+    if (light.current) invalidateLightShadow(light.current)
   }, [target, aim])
+
+  useFrame((_, delta) => {
+    const shadow = light.current?.shadow
+    if (!shadow) return
+    const state = refresh.current
+    state.elapsed += Math.min(delta, 0.1)
+    const status = usePlayerStore.getState().status
+    if (status !== state.status) {
+      state.status = status
+      state.settlingUntil = state.elapsed + 3
+    }
+    // Static wall/amp shadows are cached after scene setup. Only the tonearm's
+    // deck shadow needs periodic refresh; liquid colors and shape stay full rate.
+    const changing = state.elapsed < state.warmupUntil
+      || movingShadow && (status === 'playing' || state.elapsed < state.settlingUntil)
+    if (!shadow.map || changing && state.elapsed - state.last >= 1 / 12) {
+      if (light.current) invalidateLightShadow(light.current)
+      state.last = state.elapsed
+    }
+  })
 
   return (
     <>
       <spotLight
+        ref={light}
         position={position}
         target={target}
         color={color}
@@ -76,6 +107,7 @@ function Spot({ position, aim, intensity, angle, color, shadowSize = 1024 }: Spo
         penumbra={0.85}
         decay={0}
         castShadow
+        shadow-autoUpdate={false}
         shadow-mapSize={[shadowSize, shadowSize]}
         shadow-bias={-0.0004}
         shadow-normalBias={0.02}
@@ -89,7 +121,7 @@ export default function VinylScene() {
   return (
     <Canvas
       shadows
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       camera={{ fov: 35, near: 0.5, far: 100, position: [0, 8, 12] }}
       onCreated={({ gl }) => {
         gl.toneMappingExposure = LOOK.exposure
@@ -97,6 +129,7 @@ export default function VinylScene() {
     >
       <color attach="background" args={['#07041a']} />
       <CameraRig />
+      <RenderPerformance />
 
       <ambientLight intensity={LOOK.ambient} color="#8f7cff" />
       <hemisphereLight args={['#7a6cff', '#10062a', LOOK.hemi]} />
@@ -106,7 +139,7 @@ export default function VinylScene() {
       <Spot position={[4.3, 8.5, 1.5]} aim={[4.3, 3.6, WALL_Z]} intensity={LOOK.wallSpot} angle={0.5} color="#6a8cff" />
 
       {/* Main turntable spotlight with a cool lavender-white tone */}
-      <Spot position={[-1.6, 8, 5]} aim={[0, 0.6, 0.2]} intensity={LOOK.deckSpot} angle={0.4} color="#fff0fa" shadowSize={2048} />
+      <Spot position={[-1.6, 8, 5]} aim={[0, 0.6, 0.2]} intensity={LOOK.deckSpot} angle={0.4} color="#fff0fa" shadowSize={1024} movingShadow />
 
       {/* Spotlight illuminating the amplifier */}
       <Spot position={[5, 9, 5.5]} aim={[4.1, 0.6, 0.3]} intensity={LOOK.deckSpot} angle={0.38} color="#e6dcff" />

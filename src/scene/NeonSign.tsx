@@ -5,8 +5,8 @@ import { WALL_LIFT, WALL_Z } from './layout'
 import { NEON_H, NEON_W, drawNeon } from './neonDraw'
 import { useLights } from './useLights'
 
-// ================= 调这里 =================
-const SIGN = { x: -4.45, y: 0.34 + WALL_LIFT + 0.08, width: 4.6 } // 灯牌在墙上的位置和宽度
+// ================= Adjust here =================
+const SIGN = { x: -4.45, y: 0.34 + WALL_LIFT + 0.08, width: 4.6 } // Wall sign position and width
 // ==========================================
 
 function makeTex(which: 0 | 1) {
@@ -14,7 +14,7 @@ function makeTex(which: 0 | 1) {
   canvas.width = NEON_W
   canvas.height = NEON_H
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   drawNeon(ctx, which)
   const t = new CanvasTexture(canvas)
   t.colorSpace = SRGBColorSpace
@@ -22,7 +22,7 @@ function makeTex(which: 0 | 1) {
   return t
 }
 
-// 柜台后面墙上的霓虹灯牌：NO MUSIC 粉色缓慢呼吸，NO LIFE 青色偶尔坏掉一样闪几下
+// Neon sign behind the counter: NO MUSIC pulses slowly in pink; NO LIFE occasionally flickers in cyan
 export default function NeonSign() {
   const pink = useMemo(() => makeTex(0), [])
   const cyan = useMemo(() => makeTex(1), [])
@@ -43,7 +43,7 @@ export default function NeonSign() {
     const t = clock.elapsedTime
     const lv = level(t)
     const p = (0.88 + 0.12 * Math.sin(t * 1.6)) * lv
-    // 每 6 秒里有 0.7 秒青色灯管接触不良
+    // The cyan tube flickers for 0.7 seconds every 6 seconds
     const phase = t % 6
     const bad = phase > 5.3
     const c = (bad ? (Math.sin(t * 70) > 0.1 ? 1 : 0.12) : 0.95 + 0.05 * Math.sin(t * 3)) * lv
@@ -67,7 +67,7 @@ export default function NeonSign() {
         <planeGeometry args={[SIGN.width, h]} />
         <meshBasicMaterial ref={cyanMat} map={cyan} {...mat} />
       </mesh>
-      {/* 灯牌洒在墙和台面上的光 */}
+      {/* Light cast by the sign onto the wall and counter */}
       <pointLight ref={pinkLight} position={[SIGN.x - 1.4, SIGN.y + 0.2, WALL_Z + 0.9]} color="#ff4fd8" intensity={5} decay={1} />
       <pointLight ref={cyanLight} position={[SIGN.x + 1.4, SIGN.y + 0.2, WALL_Z + 0.9]} color="#35f2ff" intensity={5} decay={1} />
     </group>

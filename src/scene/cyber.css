@@ -1,4 +1,4 @@
-/* 赛博朋克配色：放在 index.css 之后加载，覆盖前面的牛皮纸配色 */
+/* Cyberpunk palette: load after index.css to override the kraft paper palette */
 
 :focus-visible {
   outline: 3px solid #35f2ff;
@@ -8,7 +8,7 @@
   background: #07041a;
 }
 
-/* 店招 */
+/* Shop sign */
 .sign h1 {
   background: linear-gradient(90deg, #ff4fd8, #7c6bff 55%, #35f2ff);
   -webkit-background-clip: text;
@@ -24,7 +24,7 @@
   font-size: 0.8rem;
 }
 
-/* 控制面板：深色毛玻璃加霓虹描边 */
+/* Control panel: dark frosted glass with a neon outline */
 .sleeve {
   background: rgba(14, 8, 44, 0.68);
   background-image: none;
@@ -50,7 +50,7 @@
   color: #35f2ff;
 }
 
-/* 播放键 */
+/* Play button */
 .sticker {
   background: linear-gradient(135deg, #ff4fd8, #7c6bff);
   color: #fff;
@@ -70,7 +70,7 @@
   color: #d9ccff;
 }
 
-/* 进度条 */
+/* Progress bar */
 .groove::-webkit-slider-runnable-track {
   background: linear-gradient(
     to right,
@@ -93,7 +93,7 @@
   border-color: #ff4fd8;
 }
 
-/* 上传区 */
+/* Upload area */
 .crate__button {
   color: #efe6ff;
   border: 2px dashed rgba(255, 79, 216, 0.7);
@@ -109,13 +109,13 @@
   color: #ff9ad8;
 }
 
-/* 画布正好占满一屏（手机用 dvh，避开地址栏） */
+/* Fill the viewport with the canvas (use dvh on mobile to account for the address bar) */
 html, body, #root { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
 .booth { height: auto; min-height: 0; overflow: visible; }
 .stage { position: relative; width: 100%; height: 100vh; height: 100dvh; min-height: 0; }
 .stage canvas { display: block; }
 
-/* 封面编辑弹窗 */
+/* Cover editor dialog */
 .cover-ed { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(5, 2, 20, 0.7); backdrop-filter: blur(4px); }
 .cover-ed__card { width: min(360px, 92vw); padding: 18px; border-radius: 14px; background: #120a30; border: 1px solid rgba(255, 79, 216, 0.6); box-shadow: 0 0 30px rgba(255, 79, 216, 0.3), 0 0 60px rgba(53, 242, 255, 0.15); color: #efe6ff; font-family: system-ui, sans-serif; }
 .cover-ed__title { font-size: 14px; letter-spacing: 0.12em; color: #35f2ff; margin-bottom: 10px; }

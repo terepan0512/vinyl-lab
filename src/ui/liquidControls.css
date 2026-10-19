@@ -1,0 +1,25 @@
+.liquid-controls {
+  margin: 10px 0 16px;
+  padding: 10px 12px;
+  border: 1px solid #ffffff24;
+  border-radius: 8px;
+  background: #ffffff05;
+}
+
+.liquid-controls > summary { font-size: 11px; }
+.liquid-controls > summary > span { margin-left: 8px; color: #b7b1ca; font-size: 10px; font-weight: 400; }
+.liquid-controls__sliders { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin-top: 14px; }
+.liquid-controls__control { display: grid; gap: 8px; min-width: 0; color: #ddd6eb; font-size: 11px; }
+.liquid-controls__control > span { display: flex; justify-content: space-between; gap: 8px; }
+.liquid-controls__control output { color: #c2bbcf; font-variant-numeric: tabular-nums; }
+.liquid-controls__control input { width: 100%; margin: 0; accent-color: #cbb8f1; cursor: pointer; }
+.liquid-controls__footer { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.liquid-controls__footer p { flex: 1; margin: 0; font-size: 10px; }
+.liquid-controls__footer button { flex-shrink: 0; }
+.liquid-controls > summary:focus-visible { outline: 2px solid #cbb8f1; outline-offset: 3px; }
+
+@media (max-width: 400px) {
+  .liquid-controls > summary > span { display: block; margin: 5px 0 0 14px; }
+  .liquid-controls__sliders { gap: 12px; }
+  .liquid-controls__footer { align-items: flex-start; }
+}

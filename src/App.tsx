@@ -1,11 +1,13 @@
 
 import VinylScene from './scene/VinylScene'
 import CoverEditor from './scene/CoverEditor'
+import ColorJourney from './ui/ColorJourney'
 
-// All controls are integrated into the 3D scene, including the
+// Playback and upload controls are integrated into the 3D scene, including the
 // amplifier's playback knob, the Add Record button, and the progress bar.
 // The VINYL LAB neon sign above the window is clickable to toggle its light.
 // Press Space to play/pause, or drag and drop MP3/WAV files onto the page.
+// ColorJourney previews the analyzed color layers and offers a seekable timeline.
 export default function App() {
   return (
     <main className="booth">
@@ -27,6 +29,7 @@ export default function App() {
         <VinylScene />
       </div>
       <CoverEditor />
+      <ColorJourney />
     </main>
   )
 }

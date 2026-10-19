@@ -1,0 +1,122 @@
+{
+  "version": "synthetic-timbre-pca-v1",
+  "provenance": "Engineering reference fitted only to 96 generated spectra. No uploaded tracks, real music, existing color fixtures, or human color labels enter fitting. PCA axes describe synthetic variation, not validated perception.",
+  "extractor": {
+    "library": "librosa",
+    "libraryVersion": "0.11.0",
+    "sampleRate": 22050,
+    "nFft": 2048,
+    "hopLength": 512,
+    "nMels": 40,
+    "nMfcc": 13,
+    "melScale": "slaney",
+    "dctType": 2,
+    "dctNorm": "ortho",
+    "topDb": 80,
+    "excludedCoefficient": 0,
+    "aggregation": "duration mean of audible 250 ms extractor frames"
+  },
+  "reference": {
+    "count": 96,
+    "families": [
+      "pure",
+      "harmonic",
+      "filtered-noise",
+      "percussive"
+    ],
+    "frequenciesHz": [
+      65.406,
+      110,
+      185,
+      311.127,
+      523.251,
+      880,
+      1480,
+      2489.016
+    ],
+    "envelopes": [
+      "steady",
+      "swell",
+      "pulsed"
+    ],
+    "durationSeconds": 1.5,
+    "scaleFloor": 8.0,
+    "eigenScaleFloor": 0.5,
+    "seed": 8419,
+    "signConvention": "largest absolute coefficient positive",
+    "explainedVarianceRatio": [
+      0.30444342654857315,
+      0.17495424571634566
+    ],
+    "projectionMinimum": [
+      -1.8484543258431838,
+      -3.6288161969637884
+    ],
+    "projectionMaximum": [
+      2.2310723194427666,
+      2.1051669482416786
+    ]
+  },
+  "mean": [
+    49.91698608017631,
+    -6.519105798351908,
+    2.8061223636730594,
+    0.9086096947184866,
+    1.0658062120731409,
+    -0.9101377400828304,
+    0.6240761277653891,
+    -1.5110227272224923,
+    -1.3928862413650176,
+    1.6824664743875877,
+    -1.7817857249174276,
+    -7.7886339673070735
+  ],
+  "scale": [
+    76.08624368951648,
+    54.467825130919394,
+    28.288657310876605,
+    24.872253654054713,
+    21.794914974157788,
+    17.482037072097427,
+    19.16783798340736,
+    19.303077592761312,
+    17.652157077691836,
+    17.419514544284926,
+    14.65214578177474,
+    17.631825699526548
+  ],
+  "components": [
+    [
+      0.011531041752276228,
+      0.33364761499144985,
+      0.32519947592272985,
+      0.42494760961683153,
+      0.38625184302563587,
+      0.4384657268585197,
+      0.2702343126178934,
+      0.23967314875833678,
+      0.2110566292184227,
+      0.2445170012415037,
+      0.15781033741809158,
+      0.03257429931533337
+    ],
+    [
+      0.3143113817754782,
+      0.17150137908178575,
+      0.2718943580110611,
+      0.20140788944087012,
+      -0.041646158113432474,
+      -0.1086530547617339,
+      -0.2027648019549625,
+      -0.3634545536127239,
+      -0.4358357656992724,
+      -0.09423347537392639,
+      0.4614822176300497,
+      0.3984378074823845
+    ]
+  ],
+  "eigenScale": [
+    1.9113662962872606,
+    1.4489482215028078
+  ]
+}

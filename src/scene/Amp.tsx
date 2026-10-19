@@ -22,7 +22,7 @@ function makeTexture(w: number, h: number): [CanvasTexture, CanvasRenderingConte
   canvas.width = w
   canvas.height = h
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   const tex = new CanvasTexture(canvas)
   tex.colorSpace = SRGBColorSpace
   tex.anisotropy = 8
@@ -33,7 +33,7 @@ const pointer = (on: boolean) => () => {
   document.body.style.cursor = on ? 'pointer' : ''
 }
 
-// 前面板在功放本地坐标里的深度
+// Front panel depth in amplifier local coordinates
 const FRONT = 1.0
 
 export default function Amp() {
@@ -48,7 +48,7 @@ export default function Amp() {
   const lastKey = useRef('')
   const lastPlaying = useRef<boolean | null>(null)
 
-  // 隐藏的文件选择框：点 Add record 时打开
+  // Hidden file picker opened by Add record
   const picker = useMemo(() => {
     const input = document.createElement('input')
     input.type = 'file'
@@ -72,7 +72,7 @@ export default function Amp() {
     }
   }, [display, icon, plate, pctx])
 
-  // 键盘空格 = 播放/暂停；整个页面都能拖文件进来
+  // Space toggles play/pause; files can be dropped anywhere on the page
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target
@@ -80,7 +80,9 @@ export default function Amp() {
         e.code !== 'Space' ||
         t instanceof HTMLInputElement ||
         t instanceof HTMLTextAreaElement ||
-        t instanceof HTMLButtonElement
+        t instanceof HTMLButtonElement ||
+        t instanceof HTMLSelectElement ||
+        (t instanceof HTMLElement && (t.isContentEditable || t.closest('summary')))
       )
         return
       e.preventDefault()
@@ -108,8 +110,8 @@ export default function Amp() {
     const hasTrack = !!s.track
     const progress = s.duration > 0 ? Math.min(1, s.currentTime / s.duration) : 0
 
-    // 显示屏：内容变了才重画（最多每秒几次）
-    const key = `${s.track?.title ?? ''}|${Math.floor(s.currentTime)}|${Math.floor(s.duration)}|${playing}|${s.error ?? ''}|${Math.round(progress * 96)}`
+    // Display: redraw only when its contents change, at most a few times per second
+    const key = `${s.track?.title ?? ''}|${Math.floor(s.currentTime)}|${Math.floor(s.duration)}|${playing}|${s.error ?? ''}|${Math.round(progress * 96)}|${s.status}|${Math.floor(s.analysisProgress * 100)}`
     if (key !== lastKey.current) {
       lastKey.current = key
       drawDisplay(dctx, {
@@ -120,11 +122,13 @@ export default function Amp() {
         playing,
         hasTrack,
         error: s.error,
+        status: s.status,
+        analysisProgress: s.analysisProgress,
       })
       display.needsUpdate = true
     }
 
-    // 播放旋钮上的图标和光环
+    // Playback knob icon and halo
     if (lastPlaying.current !== playing) {
       lastPlaying.current = playing
       drawPlayIcon(ictx, 128, playing)
@@ -135,7 +139,7 @@ export default function Amp() {
       m.color.set(playing ? '#35f2ff' : hasTrack ? '#ff4fd8' : '#3b2a66')
     }
 
-    // 按下去的动画
+    // Button press animation
     const p = press.current
     if (playGroup.current) {
       playGroup.current.position.z = MathUtils.lerp(playGroup.current.position.z, FRONT + 0.02 - p.play * 0.04, Math.min(1, delta * 20))
@@ -148,7 +152,7 @@ export default function Amp() {
   const onDisplayDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
     const uv = e.uv
-    if (!uv || uv.y > 0.36) return // 只有下方的灯条区域响应
+    if (!uv || uv.y > 0.36) return // Only the lower light bar responds
     const ratio = MathUtils.clamp((uv.x * DISPLAY_W - BAR.x0) / (BAR.x1 - BAR.x0), 0, 1)
     const { duration, track, seek } = usePlayerStore.getState()
     if (track && duration > 0) seek(ratio * duration)
@@ -158,18 +162,18 @@ export default function Amp() {
 
   return (
     <group position={[3.4, 0, 0.1]}>
-      {/* 机身 */}
+      {/* Amplifier body */}
       <RoundedBox args={[3.6, 1.0, 2.0]} radius={0.05} smoothness={4} position={[0, 0.5, 0]} castShadow receiveShadow>
         <meshStandardMaterial color="#17142e" metalness={0.8} roughness={0.38} />
       </RoundedBox>
-      {/* 脚 */}
+      {/* Feet */}
       {[-1.5, 1.5].flatMap((x) => [-0.8, 0.8].map((z) => (
         <mesh key={`${x}${z}`} position={[x, 0.02, z]}>
           <cylinderGeometry args={[0.1, 0.12, 0.04, 20]} />
           <meshStandardMaterial color="#07041a" roughness={0.6} />
         </mesh>
       )))}
-      {/* 顶部散热槽 */}
+      {/* Top ventilation slots */}
       {Array.from({ length: 9 }, (_, i) => (
         <mesh key={i} position={[0, 1.004, -0.7 + i * 0.16]}>
           <boxGeometry args={[2.8, 0.012, 0.05]} />
@@ -177,13 +181,13 @@ export default function Amp() {
         </mesh>
       ))}
 
-      {/* 前面板 */}
+      {/* Front panel */}
       <mesh position={[0, 0.5, FRONT + 0.006]} receiveShadow>
         <boxGeometry args={[3.4, 0.88, 0.012]} />
         <meshStandardMaterial color="#2a2748" metalness={0.9} roughness={0.3} />
       </mesh>
 
-      {/* 显示屏：点下方灯条可以跳转进度 */}
+      {/* Display: click the lower light bar to seek */}
       <mesh
         position={[-0.55, 0.64, FRONT + 0.016]}
         onPointerDown={onDisplayDown}
@@ -193,13 +197,13 @@ export default function Amp() {
         <planeGeometry args={[2.1, 0.525]} />
         <meshBasicMaterial map={display} toneMapped={false} />
       </mesh>
-      {/* 显示屏边框 */}
+      {/* Display bezel */}
       <mesh position={[-0.55, 0.64, FRONT + 0.012]}>
         <planeGeometry args={[2.18, 0.6]} />
         <meshBasicMaterial color="#05020f" />
       </mesh>
 
-      {/* 播放旋钮 */}
+      {/* Playback knob */}
       <group
         ref={playGroup}
         position={[1.17, 0.58, FRONT + 0.02]}
@@ -223,7 +227,7 @@ export default function Amp() {
         </mesh>
       </group>
 
-      {/* Add record 按钮 */}
+      {/* Add record button */}
       <group
         ref={addGroup}
         position={[-1.0, 0.2, FRONT + 0.02]}
@@ -241,7 +245,7 @@ export default function Amp() {
           <planeGeometry args={[0.96, 0.24]} />
           <meshBasicMaterial map={plate} transparent toneMapped={false} />
         </mesh>
-        {/* 按钮上沿的灯带 */}
+        {/* Light strip along the top of the button */}
         <mesh position={[0, 0.108, 0.05]}>
           <boxGeometry args={[1.1, 0.014, 0.1]} />
           <meshBasicMaterial color="#ff4fd8" toneMapped={false} />

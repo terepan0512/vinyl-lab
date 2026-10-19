@@ -1,8 +1,8 @@
-// 功放面板上的所有 2D 画面，纯 canvas，不依赖 three，方便单独预览。
+// All 2D amplifier panel graphics use canvas, independent of Three.js for standalone previews.
 
 export const DISPLAY_W = 1024
 export const DISPLAY_H = 256
-// 进度灯条在显示屏画布里的位置（点击跳转时要用）
+// Progress light bar position in the display canvas, used when seeking
 export const BAR = { x0: 40, x1: 984, y0: 188, y1: 240, segments: 48 }
 
 const MONO = "ui-monospace, Menlo, Consolas, 'Courier New', monospace"
@@ -15,6 +15,8 @@ export interface DisplayState {
   playing: boolean
   hasTrack: boolean
   error: string | null
+  status?: string
+  analysisProgress?: number
 }
 
 function fit(ctx: CanvasRenderingContext2D, text: string, maxW: number) {
@@ -31,13 +33,13 @@ export function drawDisplay(ctx: CanvasRenderingContext2D, s: DisplayState) {
   ctx.fillStyle = '#0a0418'
   ctx.fillRect(0, 0, W, H)
 
-  // 轻微的扫描线
+  // Subtle scan lines
   ctx.fillStyle = 'rgba(255,255,255,0.025)'
   for (let y = 0; y < H; y += 4) ctx.fillRect(0, y, W, 1)
 
   ctx.textBaseline = 'alphabetic'
 
-  // 第一行：曲名（没有曲子时给提示）
+  // First line: track title, or a prompt when no track is loaded
   ctx.shadowBlur = 14
   if (s.error) {
     ctx.fillStyle = '#ff9ad8'
@@ -56,17 +58,21 @@ export function drawDisplay(ctx: CanvasRenderingContext2D, s: DisplayState) {
     ctx.fillText('NO RECORD', 40, 92)
   }
 
-  // 第二行：时间 + 状态
+  // Second line: time and playback status
   ctx.fillStyle = s.hasTrack ? '#ff4fd8' : 'rgba(255,79,216,0.4)'
   ctx.shadowColor = '#ff4fd8'
   ctx.font = `600 52px ${MONO}`
   ctx.fillText(s.hasTrack ? `${s.time} / ${s.duration}` : '--:-- / --:--', 40, 152)
   ctx.textAlign = 'right'
-  ctx.fillText(s.playing ? 'PLAY' : s.hasTrack ? 'PAUSE' : 'IDLE', W - 40, 152)
+  const status = s.status === 'analyzing' ? `ANALYZING ${Math.round((s.analysisProgress ?? 0) * 100)}%`
+    : s.status === 'ready' ? 'READY'
+    : s.status === 'error' ? 'ERROR'
+    : s.playing ? 'PLAY' : s.hasTrack ? 'PAUSE' : 'IDLE'
+  ctx.fillText(status, W - 40, 152)
   ctx.textAlign = 'left'
   ctx.shadowBlur = 0
 
-  // 进度灯条：48 格，亮的部分从粉渐变到青
+  // Progress light bar: 48 segments, with lit segments fading from pink to cyan
   const { x0, x1, y0, y1, segments } = BAR
   const gap = 4
   const segW = (x1 - x0 - gap * (segments - 1)) / segments
@@ -90,7 +96,7 @@ export function drawDisplay(ctx: CanvasRenderingContext2D, s: DisplayState) {
   ctx.shadowBlur = 0
 }
 
-// 按钮上的小标签
+// Small button labels
 export function drawPlate(ctx: CanvasRenderingContext2D, w: number, h: number, text: string, color = '#d9ccff') {
   ctx.clearRect(0, 0, w, h)
   ctx.fillStyle = color
@@ -100,7 +106,7 @@ export function drawPlate(ctx: CanvasRenderingContext2D, w: number, h: number, t
   ctx.fillText(text, w / 2, h / 2 + 2)
 }
 
-// 播放旋钮上的图标：播放时显示暂停符号，暂停时显示播放三角
+// Playback knob icon: pause symbol while playing, play triangle while paused
 export function drawPlayIcon(ctx: CanvasRenderingContext2D, size: number, playing: boolean) {
   ctx.clearRect(0, 0, size, size)
   ctx.fillStyle = '#140a3a'

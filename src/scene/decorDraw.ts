@@ -1,4 +1,4 @@
-// 三张演出海报，纯 canvas，512 × 720。
+// Three concert posters drawn with canvas at 512 × 720.
 export const POSTER_W = 512
 export const POSTER_H = 720
 
@@ -12,7 +12,7 @@ export function drawPoster(ctx: CanvasRenderingContext2D, kind: number) {
   ctx.textBaseline = 'alphabetic'
 
   if (kind === 0) {
-    // NEON NIGHTS：复古落日加网格地面
+    // NEON NIGHTS: retro sunset with a grid floor
     const bg = ctx.createLinearGradient(0, 0, 0, H)
     bg.addColorStop(0, '#140a3a')
     bg.addColorStop(0.5, '#4a1fb8')
@@ -28,11 +28,11 @@ export function drawPoster(ctx: CanvasRenderingContext2D, kind: number) {
     ctx.beginPath()
     ctx.arc(256, 310, 140, 0, Math.PI * 2)
     ctx.fill()
-    // 落日下半部的横向切口
+    // Horizontal cuts across the lower half of the sun
     ctx.fillStyle = '#7a22b8'
     for (let i = 0; i < 6; i++) ctx.fillRect(100, 330 + i * 20, 312, 4 + i * 2)
 
-    // 地平线下的网格
+    // Grid below the horizon
     const horizon = 450
     ctx.fillStyle = '#1a0a48'
     ctx.fillRect(0, horizon, W, H - horizon)
@@ -63,7 +63,7 @@ export function drawPoster(ctx: CanvasRenderingContext2D, kind: number) {
     ctx.font = `600 26px ${MONO}`
     ctx.fillText('LIVE · FRI 21:00', 256, 690)
   } else if (kind === 1) {
-    // LIVE TONIGHT：大号拨片
+    // LIVE TONIGHT: large guitar pick
     ctx.fillStyle = '#0b1f5c'
     ctx.fillRect(0, 0, W, H)
     for (let i = 0; i < 14; i++) {
@@ -94,7 +94,7 @@ export function drawPoster(ctx: CanvasRenderingContext2D, kind: number) {
     ctx.font = `400 26px ${MONO}`
     ctx.fillText('DOORS 20:00', 256, 685)
   } else {
-    // VINYL CLUB：同心圆唱片
+    // VINYL CLUB: concentric record grooves
     ctx.fillStyle = '#0a0620'
     ctx.fillRect(0, 0, W, H)
     for (let r = 230; r > 40; r -= 9) {

@@ -1,4 +1,4 @@
-// 纯 canvas 绘制，不依赖 three，方便单独预览。
+// Drawn entirely with canvas, independent of Three.js for standalone previews.
 function rng(seed: number) {
   let s = seed | 0
   return () => {
@@ -28,7 +28,7 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
   const r = rng(seed)
   const pick = <T,>(a: readonly T[]) => a[Math.floor(r() * a.length)]
 
-  // ---- 天空：深紫 → 电光蓝 → 品红地平线 ----
+  // ---- Sky: deep purple → electric blue → magenta horizon ----
   const sky = ctx.createLinearGradient(0, 0, 0, H)
   sky.addColorStop(0, '#07031f')
   sky.addColorStop(0.35, '#170b66')
@@ -43,14 +43,14 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
     ctx.fillRect(r() * W, r() * H * 0.42, 1.5, 1.5)
   }
 
-  // 大号粉色光晕（像隔着雾的月亮）
+  // Large pink halo, like a moon seen through fog
   const glow = ctx.createRadialGradient(W * 0.68, H * 0.5, 10, W * 0.68, H * 0.5, W * 0.6)
   glow.addColorStop(0, 'rgba(255,120,220,0.6)')
   glow.addColorStop(1, 'rgba(255,120,220,0)')
   ctx.fillStyle = glow
   ctx.fillRect(0, 0, W, H)
 
-  // ---- 楼群 ----
+  // ---- Buildings ----
   const towers = (o: TowerLayer) => {
     let x = -30
     while (x < W) {
@@ -113,7 +113,7 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
     winProb: 0.34, winColors: ['#ff4fd8', '#35f2ff', '#e6dcff'], edgeProb: 0.5, gapMin: 14, gapMax: 60,
   })
 
-  // ---- 竖排霓虹招牌 ----
+  // ---- Vertical neon signs ----
   for (let i = 0; i < 5; i++) {
     const c = pick(NEON)
     const sx = W * (0.08 + r() * 0.8)
@@ -144,7 +144,7 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
     winProb: 0.14, winColors: ['#ff9ad8', '#ffd36b', '#7df9ff'], edgeProb: 0.5, gapMin: 180, gapMax: 330,
   })
 
-  // ---- 飞行器光迹 ----
+  // ---- Aircraft light trails ----
   for (let i = 0; i < 7; i++) {
     const c = pick(NEON)
     const fx = r() * W
@@ -165,7 +165,7 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
     ctx.restore()
   }
 
-  // ---- 底部雾气和边缘暗角 ----
+  // ---- Ground fog and edge vignette ----
   const fog = ctx.createLinearGradient(0, H * 0.72, 0, H)
   fog.addColorStop(0, 'rgba(255,79,176,0)')
   fog.addColorStop(1, 'rgba(255,79,176,0.45)')
@@ -179,7 +179,7 @@ export function drawCity(ctx: CanvasRenderingContext2D, W: number, H: number, se
   ctx.fillRect(0, 0, W, H)
 }
 
-// 雨：透明背景上的斜细线，可以无缝上下平铺
+// Rain: fine diagonal lines on a transparent background, tiled vertically without seams
 export function drawRain(ctx: CanvasRenderingContext2D, W: number, H: number, seed = 3) {
   const r = rng(seed)
   ctx.clearRect(0, 0, W, H)

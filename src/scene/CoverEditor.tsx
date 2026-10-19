@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useCoverStore } from '../state/coverStore'
 import { generatedCoverDataUrl, imageToCoverDataUrl } from './coverGen'
 
-// 点墙上的封套弹出来：上传自己的图，或者随机生成一张
+// Open from a wall cover to upload an image or generate a random cover
 export default function CoverEditor() {
   const editing = useCoverStore((s) => s.editing)
   const current = useCoverStore((s) => (s.editing === null ? undefined : s.covers[s.editing]))
@@ -36,7 +36,7 @@ export default function CoverEditor() {
   const onFile = (file: File | undefined) => {
     if (!file) return
     if (!file.type.startsWith('image/')) {
-      setError('请选一张图片（png / jpg / webp）')
+      setError('Choose an image (PNG / JPG / WebP)')
       return
     }
     const url = URL.createObjectURL(file)
@@ -46,12 +46,12 @@ export default function CoverEditor() {
         setDraft(imageToCoverDataUrl(img))
         setError('')
       } catch {
-        setError('这张图读不了，换一张试试')
+        setError('Unable to read this image. Try another one.')
       }
       URL.revokeObjectURL(url)
     }
     img.onerror = () => {
-      setError('这张图读不了，换一张试试')
+      setError('Unable to read this image. Try another one.')
       URL.revokeObjectURL(url)
     }
     img.src = url
@@ -60,14 +60,14 @@ export default function CoverEditor() {
   return (
     <div className="cover-ed" onClick={closeEditor}>
       <div className="cover-ed__card" onClick={(e) => e.stopPropagation()}>
-        <div className="cover-ed__title">封套 {editing + 1}</div>
+        <div className="cover-ed__title">Cover {editing + 1}</div>
         <div className="cover-ed__preview">
-          {preview ? <img src={preview} alt="封面预览" /> : <span>还是默认封面，上传或生成一张吧</span>}
+          {preview ? <img src={preview} alt="Cover preview" /> : <span>Upload an image or generate a cover to replace the default.</span>}
         </div>
         {error && <div className="cover-ed__err">{error}</div>}
         <div className="cover-ed__row">
-          <button onClick={() => fileRef.current?.click()}>上传图片</button>
-          <button onClick={roll}>随机生成</button>
+          <button onClick={() => fileRef.current?.click()}>Upload Image</button>
+          <button onClick={roll}>Generate Random Cover</button>
         </div>
         <div className="cover-ed__row">
           <button
@@ -78,7 +78,7 @@ export default function CoverEditor() {
               closeEditor()
             }}
           >
-            用这张
+            Apply Cover
           </button>
           <button
             disabled={!current && !draft}
@@ -87,9 +87,9 @@ export default function CoverEditor() {
               closeEditor()
             }}
           >
-            恢复默认
+            Reset to Default
           </button>
-          <button onClick={closeEditor}>关闭</button>
+          <button onClick={closeEditor}>Close</button>
         </div>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
       </div>

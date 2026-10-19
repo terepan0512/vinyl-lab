@@ -24,11 +24,11 @@ import bannerUrl from '../assets/banner-rad.jpg'
 const DARK_METAL = '#1a1233'
 const CHROME = { color: '#d5d8e0', metalness: 1, roughness: 0.22 } as const
 
-// ---------------- 电吉他 ----------------
-const BODY_SY = 1.18 // 把琴身在竖直方向拉长一点，比例更像真吉他
-const POCKET_Y = 1.95 * BODY_SY // 琴颈插口的高度
+// ---------------- Electric guitar ----------------
+const BODY_SY = 1.18 // Stretch the body vertically for more realistic guitar proportions
+const POCKET_Y = 1.95 * BODY_SY // Neck joint height
 const BRIDGE_Y = 0.6
-const Z_TOP = 0.27 // 琴身正面的深度（挤出 0.22 加两侧倒角 0.04）
+const Z_TOP = 0.27 // Front body depth (0.22 extrusion plus 0.04 bevels on both sides)
 
 function Guitar({ x, y, tilt }: { x: number; y: number; tilt: number }) {
   const shape = useMemo(() => {
@@ -62,27 +62,27 @@ function Guitar({ x, y, tilt }: { x: number; y: number; tilt: number }) {
 
   return (
     <group position={[x, y, WALL_Z + 0.06]} rotation={[0, 0, tilt]}>
-      {/* 琴身 */}
+      {/* Guitar body */}
       <mesh geometry={bodyGeo} scale={[1, BODY_SY, 1]} castShadow receiveShadow>
         <meshPhysicalMaterial color="#ff4fd8" metalness={0.25} roughness={0.25} clearcoat={1} clearcoatRoughness={0.08} />
       </mesh>
-      {/* 护板 */}
+      {/* Pickguard */}
       <mesh geometry={guardGeo} position={[0, 0.28, Z_TOP + 0.004]} scale={[0.74, 0.62 * BODY_SY, 1]} receiveShadow>
         <meshPhysicalMaterial color="#120a2e" roughness={0.3} clearcoat={0.8} />
       </mesh>
-      {/* 拾音器 */}
+      {/* Pickups */}
       {[1.0, 1.4, 1.8].map((py) => (
         <mesh key={py} position={[0, py, Z_TOP + 0.03]} castShadow>
           <boxGeometry args={[0.62, 0.07, 0.05]} />
           <meshStandardMaterial color="#efe8fb" roughness={0.45} />
         </mesh>
       ))}
-      {/* 琴桥 */}
+      {/* Bridge */}
       <mesh position={[0, BRIDGE_Y, Z_TOP + 0.02]} castShadow>
         <boxGeometry args={[0.5, 0.12, 0.035]} />
         <meshStandardMaterial {...CHROME} />
       </mesh>
-      {/* 旋钮 */}
+      {/* Knobs */}
       {[[0.5, 0.34], [0.3, 0.24], [0.1, 0.18]].map(([kx, ky]) => (
         <mesh key={kx} position={[kx, ky, Z_TOP + 0.045]} rotation={[Math.PI / 2, 0, 0]} castShadow>
           <cylinderGeometry args={[0.05, 0.055, 0.07, 20]} />
@@ -90,24 +90,24 @@ function Guitar({ x, y, tilt }: { x: number; y: number; tilt: number }) {
         </mesh>
       ))}
 
-      {/* 琴颈 */}
+      {/* Neck */}
       <mesh position={[0, POCKET_Y - 0.1 + neckLen / 2, 0.2]} castShadow>
         <boxGeometry args={[0.25, neckLen, 0.07]} />
         <meshStandardMaterial color="#c9965a" roughness={0.5} />
       </mesh>
-      {/* 指板 */}
+      {/* Fretboard */}
       <mesh position={[0, POCKET_Y - 0.1 + neckLen / 2, 0.24]}>
         <boxGeometry args={[0.21, neckLen, 0.015]} />
         <meshStandardMaterial color="#1b0f2e" roughness={0.45} />
       </mesh>
-      {/* 品丝 */}
+      {/* Frets */}
       {frets.map((fy, i) => (
         <mesh key={i} position={[0, fy, 0.25]}>
           <boxGeometry args={[0.21, 0.011, 0.012]} />
           <meshStandardMaterial {...CHROME} />
         </mesh>
       ))}
-      {/* 琴头和旋钮 */}
+      {/* Headstock and tuning pegs */}
       <mesh position={[0, NUT_Y + 0.33, 0.2]} castShadow>
         <boxGeometry args={[0.36, 0.66, 0.05]} />
         <meshStandardMaterial color="#c9965a" roughness={0.5} />
@@ -118,14 +118,14 @@ function Guitar({ x, y, tilt }: { x: number; y: number; tilt: number }) {
           <meshStandardMaterial {...CHROME} />
         </mesh>
       ))}
-      {/* 琴弦 */}
+      {/* Strings */}
       {Array.from({ length: 6 }, (_, i) => (
         <mesh key={i} position={[(i - 2.5) * 0.034, (BRIDGE_Y + NUT_Y) / 2, Z_TOP + 0.045]}>
           <cylinderGeometry args={[0.0055, 0.0055, NUT_Y - BRIDGE_Y, 6]} />
           <meshStandardMaterial {...CHROME} />
         </mesh>
       ))}
-      {/* 挂钩 */}
+      {/* Hook */}
       <mesh position={[0, NUT_Y + 0.7, 0.1]} castShadow>
         <boxGeometry args={[0.1, 0.22, 0.12]} />
         <meshStandardMaterial {...CHROME} />
@@ -134,8 +134,8 @@ function Guitar({ x, y, tilt }: { x: number; y: number; tilt: number }) {
   )
 }
 
-// 用图片做的海报。图片用 useLoader 加载（有缓存），加载期间显示一块紫色占位，不会卡住整个场景。
-const IMG_ASPECT = 1036 / 732 // ONE OK ROCK 海报，已经裁掉黑边
+// Image poster. useLoader caches the image; a purple placeholder keeps the scene visible while loading.
+const IMG_ASPECT = 1036 / 732 // ONE OK ROCK poster with black borders cropped out
 
 interface ImagePosterProps {
   x: number
@@ -156,7 +156,7 @@ function PosterBody({ w, src, aspect }: { w: number; src: string; aspect: number
   return (
     <mesh>
       <planeGeometry args={[w, w * aspect]} />
-      {/* 这张图在聚光灯照不到的角落，用不受光照的材质，保证看得清 */}
+      {/* Use an unlit material to keep this image visible in a corner beyond the spotlight */}
       <meshBasicMaterial map={tex} color="#bdb6dc" />
     </mesh>
   )
@@ -186,19 +186,19 @@ function ImagePoster({ x, y, w, src, rot, aspect = IMG_ASPECT }: ImagePosterProp
   )
 }
 
-// ---------------- 荧光应援棒（原创造型）：两根叠在一起，用手绳挂在一个挂钩上 ----------------
-const STICK_R = 0.07 // 灯管半径（细）
+// ---------------- Original light sticks: two overlapping sticks hung from one hook by wrist straps ----------------
+const STICK_R = 0.07 // Tube radius (slender)
 
 function makeGlowTexture() {
   const canvas = document.createElement('canvas')
   canvas.width = 8
   canvas.height = 256
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+  if (!ctx) throw new Error('This browser does not support 2D canvas')
   const g = ctx.createLinearGradient(0, 0, 0, 256)
   g.addColorStop(0, '#ff4fd8')
   g.addColorStop(0.5, '#35f2ff')
-  g.addColorStop(1, '#ff4fd8') // 首尾同色，滚动时接得上
+  g.addColorStop(1, '#ff4fd8') // Matching endpoint colors keep scrolling seamless
   ctx.fillStyle = g
   ctx.fillRect(0, 0, 8, 256)
   const t = new CanvasTexture(canvas)
@@ -220,16 +220,16 @@ function Stick({ swing, dx, dz, phase }: { swing: number; dx: number; dz: number
   const chrome = <meshStandardMaterial color="#d5d8e0" metalness={1} roughness={0.25} />
   const dark = <meshStandardMaterial color="#1a1233" metalness={0.5} roughness={0.4} />
 
-  // 挂点在原点；手绳垂下 0.28，下面接棒子的手柄端，棒子倒挂着往下
+  // The anchor is at the origin; the strap drops 0.28 to the handle, with the stick hanging downward
   return (
     <group position={[dx, 0, dz]} rotation={[0, 0, swing]}>
-      {/* 手绳：一个竖着的小圈 */}
+      {/* Wrist strap: a small vertical loop */}
       <mesh position={[0, -0.14, 0]}>
         <torusGeometry args={[0.1, 0.012, 8, 28]} />
         <meshStandardMaterial color="#ff4fd8" emissive="#ff4fd8" emissiveIntensity={0.5} roughness={0.5} />
       </mesh>
       <group position={[0, -0.28, 0]} rotation={[0, 0, Math.PI]}>
-        {/* 手柄（现在在上面） */}
+        {/* Handle (at the top) */}
         <mesh position={[0, 0.3, 0]} castShadow>
           <cylinderGeometry args={[R * 1.05, R * 0.8, 0.6, 20]} />
           {dark}
@@ -246,7 +246,7 @@ function Stick({ swing, dx, dz, phase }: { swing: number; dx: number; dz: number
           <cylinderGeometry args={[R * 1.3, R * 1.15, 0.07, 20]} />
           {chrome}
         </mesh>
-        {/* 灯管：长度 1.0 */}
+        {/* Light tube: length 1.0 */}
         <mesh position={[0, 1.16, 0]}>
           <cylinderGeometry args={[R * 0.8, R * 0.8, 1.0, 20, 1, true]} />
           <meshBasicMaterial ref={mat} map={glow} transparent toneMapped={false} />
@@ -272,7 +272,7 @@ function LightSticks({ x, y }: { x: number; y: number }) {
   const chrome = <meshStandardMaterial color="#d5d8e0" metalness={1} roughness={0.25} />
   return (
     <group position={[x, y, WALL_Z]}>
-      {/* 挂钩：墙上的底板，一根伸出来的杆，杆头有个球挡住手绳 */}
+      {/* Hook: wall plate and projecting rod, with a ball tip to retain the strap */}
       <mesh position={[0, 0, 0.02]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.09, 0.09, 0.03, 20]} />
         {chrome}
@@ -285,7 +285,7 @@ function LightSticks({ x, y }: { x: number; y: number }) {
         <sphereGeometry args={[0.04, 14, 10]} />
         {chrome}
       </mesh>
-      {/* 两根棒子叠着挂，角度稍微错开 */}
+      {/* Hang the two sticks with slightly different angles */}
       <Stick swing={0.1} dx={0.02} dz={0.13} phase={0} />
       <Stick swing={-0.09} dx={-0.02} dz={0.17} phase={0.5} />
       <pointLight position={[0.3, -1.2, 0.6]} color="#c08cff" intensity={3} decay={1} distance={5} />
@@ -293,10 +293,10 @@ function LightSticks({ x, y }: { x: number; y: number }) {
   )
 }
 
-// ---------------- 吉他拨片展示框 ----------------
-// 9 枚拨片，3 × 3。有的是纯色，有的印着原创的小图案：骷髅、眼睛、闪电、唱片。
-// base 是拨片本色，art 是图案的颜色，dark 是图案里挖空的部分（一般等于本色）。
-const BLACK = '#1a1240' // 深色拨片用深靛蓝，比纯黑在深色底上更看得清
+// ---------------- Guitar pick display frame ----------------
+// Nine picks in a 3 × 3 grid. Some are solid; others have original skull, eye, lightning, or record designs.
+// base is the pick color, art is the design color, and dark is the design cutout color (usually the base color).
+const BLACK = '#1a1240' // Use deep indigo for dark picks so they remain visible against the dark backing
 type PickDef = { x: number; y: number; r: number; base: string; kind: PickKind; art?: string; dark?: string; design?: PickDesign; grad?: [string, string] }
 
 const PICKS: PickDef[] = [
@@ -330,7 +330,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
       curveSegments: 16,
     })
   }, [])
-  // 每枚拨片的图案贴图（纯色的没有）
+  // Design textures for each pick (none for solid picks)
   const faces = useMemo(
     () =>
       PICKS.map((p) => {
@@ -339,7 +339,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
         canvas.width = PICK_TEX
         canvas.height = PICK_TEX
         const ctx = canvas.getContext('2d')
-        if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+        if (!ctx) throw new Error('This browser does not support 2D canvas')
         if (p.design) drawPickDesign(ctx, p.design)
         else drawPickFace(ctx, p.kind, p.art ?? '#ffffff', p.dark ?? p.base)
         const t = new CanvasTexture(canvas)
@@ -351,7 +351,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
   )
   useEffect(() => () => faces.forEach((t) => t?.dispose()), [faces])
 
-  // 渐变拨片：一张斜向渐变贴图，铺在拨片轮廓上
+  // Gradient pick: map a diagonal gradient texture onto the pick outline
   const bodyGeo = useMemo(() => {
     const sh = new Shape()
     tracePick(sh)
@@ -365,7 +365,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
         canvas.width = 128
         canvas.height = 128
         const ctx = canvas.getContext('2d')
-        if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+        if (!ctx) throw new Error('This browser does not support 2D canvas')
         const g = ctx.createLinearGradient(20, 0, 108, 128)
         g.addColorStop(0, p.grad[0])
         g.addColorStop(1, p.grad[1])
@@ -373,7 +373,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
         ctx.fillRect(0, 0, 128, 128)
         const t = new CanvasTexture(canvas)
         t.colorSpace = SRGBColorSpace
-        // 贴图 1 × 1，对应拨片轮廓 x ∈ [-.5,.5]，y ∈ [-.55,.55]
+        // A 1 × 1 texture maps to the pick outline at x ∈ [-.5,.5], y ∈ [-.55,.55]
         t.repeat.set(1, 1 / 1.1)
         t.offset.set(0.5, 0.55 / 1.1)
         return t
@@ -388,14 +388,14 @@ function PickFrame({ x, y }: { x: number; y: number }) {
     [bodyGeo, bodies],
   )
 
-  const S = 1.7 // 框外边长
-  const HALO = S + 1.1 // 光晕平面的边长
+  const S = 1.7 // Outer frame side length
+  const HALO = S + 1.1 // Halo plane side length
   const halo = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = GLOW_SIZE
     canvas.height = GLOW_SIZE
     const ctx = canvas.getContext('2d')
-    if (!ctx) throw new Error('当前浏览器不支持 2D canvas')
+    if (!ctx) throw new Error('This browser does not support 2D canvas')
     drawGlowFrame(ctx, (S / HALO) * GLOW_SIZE)
     const t = new CanvasTexture(canvas)
     t.colorSpace = SRGBColorSpace
@@ -409,7 +409,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
     [pickGeo, halo],
   )
 
-  const t = 0.1 // 框厚度
+  const t = 0.1 // Frame thickness
   const D = 0.14
   const frame = <meshStandardMaterial color={DARK_METAL} metalness={0.6} roughness={0.4} />
 
@@ -429,12 +429,12 @@ function PickFrame({ x, y }: { x: number; y: number }) {
           {frame}
         </mesh>
       ))}
-      {/* 绒布底 */}
+      {/* Velvet backing */}
       <mesh position={[0, 0, 0.02]} receiveShadow>
         <planeGeometry args={[S - t * 2, S - t * 2]} />
         <meshStandardMaterial color="#0a0620" roughness={1} />
       </mesh>
-      {/* 拨片 */}
+      {/* Picks */}
       {PICKS.map((p, i) => (
         <mesh key={i} geometry={pickGeo} position={[p.x, p.y, 0.035]} rotation={[0, 0, p.r]} scale={0.37} castShadow>
           <meshPhysicalMaterial color={p.base} roughness={0.3} clearcoat={0.8} clearcoatRoughness={0.15} />
@@ -451,12 +451,12 @@ function PickFrame({ x, y }: { x: number; y: number }) {
           )}
         </mesh>
       ))}
-      {/* 玻璃 */}
+      {/* Glass */}
       <mesh position={[0, 0, D - 0.01]}>
         <planeGeometry args={[S - t * 2, S - t * 2]} />
         <meshStandardMaterial color="#9aa8ff" transparent opacity={0.06} roughness={0.05} envMapIntensity={2} depthWrite={false} />
       </mesh>
-      {/* 外圈的霓虹灯管：上、左是粉色，下、右是青色 */}
+      {/* Outer neon tubes: pink at the top and left, cyan at the bottom and right */}
       {[
         { p: [0, S / 2 - 0.015], a: [S, 0.03], c: '#ff4fd8' },
         { p: [-(S / 2 - 0.015), 0], a: [0.03, S], c: '#ff4fd8' },
@@ -468,7 +468,7 @@ function PickFrame({ x, y }: { x: number; y: number }) {
           <meshBasicMaterial color={b.c} toneMapped={false} />
         </mesh>
       ))}
-      {/* 光晕：在框后面，墙上露出一圈 */}
+      {/* Halo: behind the frame, visible around its edge on the wall */}
       <mesh position={[0, 0, 0.008]} renderOrder={-1}>
         <planeGeometry args={[HALO, HALO]} />
         <meshBasicMaterial map={halo} transparent toneMapped={false} blending={AdditiveBlending} depthWrite={false} />
@@ -480,20 +480,20 @@ function PickFrame({ x, y }: { x: number; y: number }) {
 export default function Decor() {
   return (
     <group>
-      {/* 窗户上面的 VINYL LAB 灯牌，点一下开关灯 */}
+      {/* VINYL LAB sign above the window; click to toggle its lights */}
       <TitleSign />
 
-      {/* 柜台后面的霓虹灯牌 */}
+      {/* Neon sign behind the counter */}
       <NeonSign />
 
-      {/* 窗户上面的墙：两块挂在木杆上的毛巾 */}
+      {/* Wall above the window: two towels hanging from a wooden rod */}
       <Towels />
 
-      {/* 左边：电吉他，旁边挂两根荧光棒 */}
+      {/* Left: electric guitar with two light sticks hanging beside it */}
       <Guitar x={-7.7} y={0.9 + WALL_LIFT} tilt={0.15} />
       <LightSticks x={-7.0} y={6.2 + WALL_LIFT} />
 
-      {/* 右边：海报、拨片展示框、RADWIMPS 海报（竖版裁剪） */}
+      {/* Right: poster, pick display frame, and RADWIMPS poster (portrait crop) */}
       <ImagePoster x={7.7} y={5.68} w={1.3} src={oorUrl} rot={-0.03} />
       <PickFrame x={7.7} y={3.56} />
       <ImagePoster x={7.7} y={1.44} w={1.3} aspect={640 / 452} src={bannerUrl} rot={0.04} />
